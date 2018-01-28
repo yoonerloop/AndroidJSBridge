@@ -1,0 +1,74 @@
+package com.example.androidjsbridgedemo;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.webkit.WebChromeClient;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.github.lzyzsd.jsbridge.BridgeHandler;
+import com.github.lzyzsd.jsbridge.BridgeWebView;
+import com.github.lzyzsd.jsbridge.CallBackFunction;
+import com.github.lzyzsd.jsbridge.DefaultHandler;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button btn = (Button) findViewById(R.id.btn);
+        final EditText etText = (EditText) findViewById(R.id.et_text);
+        final BridgeWebView bridgeWebView = (BridgeWebView) findViewById(R.id.JsBridgeWebView);
+        bridgeWebView.setDefaultHandler(new DefaultHandler());
+        bridgeWebView.setWebChromeClient(new WebChromeClient());
+        bridgeWebView.loadUrl("file:///android_asset/a.html");
+
+        /**
+         * js调用Android
+         *
+         *  注册消息handler：js获取到Android传递过来的信息EditText，同时Android也可以回调到js的响应数据data
+         *
+         *  参数一：getUserInfo就是注册供JS调用的方法名，
+         *  参数二：data是JS传过来的参数，
+         *  参数三：CallBackFunction 函数中需要把JS需要的response返回给JS
+         */
+        bridgeWebView.registerHandler("submitFromWeb", new BridgeHandler() {
+            @Override
+            public void handler(String data, CallBackFunction function) {
+                Log.e("TAG", "js返回：" + data);
+                //显示js传递给Android的消息
+                Toast.makeText(MainActivity.this, "js返回:" + data, Toast.LENGTH_LONG).show();
+                //Android返回给JS的消息
+                function.onCallBack("我是js调用Android返回数据：" + etText.getText().toString());
+            }
+        });
+
+
+        /**
+         * Android调用js
+         *
+         * Android调用js方法，获取js数据data，同时给js一个相应消息，可以多次调用js各种方法，方法名称必须保持一致
+         *
+         * 参数一：js中的方法名称
+         * 参数二：Android传递给js数据
+         * 参数三：回调接口，data为Android调用js方法的返回数据
+         */
+        btn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                bridgeWebView.callHandler("functionInJs", "Android调用js的方法", new CallBackFunction() {
+                    @Override
+                    public void onCallBack(String data) {
+                        Log.e("TAG", "onCallBack:" + data);
+                        Toast.makeText(MainActivity.this, data, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+}
