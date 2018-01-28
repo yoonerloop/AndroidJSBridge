@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         /**
          * js调用Android
          *
-         *  注册消息handler：js获取到Android传递过来的信息EditText，同时Android也可以回调到js的响应数据data
-         *
          *  参数一：getUserInfo就是注册供JS调用的方法名，
          *  参数二：data是JS传过来的参数，
          *  参数三：CallBackFunction 函数中需要把JS需要的response返回给JS
@@ -50,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * Android调用js
-         *
-         * Android调用js方法，获取js数据data，同时给js一个相应消息，可以多次调用js各种方法，方法名称必须保持一致
          *
          * 参数一：js中的方法名称
          * 参数二：Android传递给js数据
