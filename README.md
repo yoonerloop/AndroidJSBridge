@@ -35,4 +35,3 @@ Android与前端交互之JSBridge的详解<br/>
         
 ```
 
-详情请查看博客：http://blog.csdn.net/yoonerloop/article/details/78033908
